@@ -3,7 +3,7 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 
 
-df = pd.read_csv("iris1.csv")
+df = pd.read_csv("lab3/iris1.csv")
 
 (train_set, test_set) = train_test_split(df.values, train_size=0.7, random_state=285810)
 

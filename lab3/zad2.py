@@ -7,7 +7,7 @@ from sklearn import tree
 from sklearn.metrics import confusion_matrix
 import seaborn as sns
 
-df = pd.read_csv("iris1.csv")
+df = pd.read_csv("lab3/iris1.csv")
 
 (train_set, test_set) = train_test_split(df.values, train_size=0.7, random_state=285810)
 
@@ -22,12 +22,8 @@ dtc = tree.DecisionTreeClassifier()
 dtc.fit(train_inputs, train_classes)
 
 
-fig, ax = plt.subplots(figsize=(10, 10))  # adjust the size of the plot
-tree.plot_tree(dtc, 
-               feature_names=df.columns[:4], 
-               class_names=list(np.unique(train_classes)), 
-               filled=True, 
-               ax=ax)
+fig, ax = plt.subplots(figsize=(10, 10))
+tree.plot_tree(dtc, feature_names=df.columns[:4], class_names=list(np.unique(train_classes)), filled=True, ax=ax)
 plt.show()
 
 accuracy = dtc.score(test_inputs, test_classes)
