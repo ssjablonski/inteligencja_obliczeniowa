@@ -33,35 +33,32 @@ df = pd.DataFrame({
     'category': categories
 })
 
-# print(df.head())
-# print(df.tail())
-
 model = Sequential([
-    Conv2D(32, (3, 3), activation='relu', input_shape=(IMAGE_WIDTH, IMAGE_HEIGHT, IMAGE_CHANNELS)),
+    Conv2D(32, (3, 3), activation='sigmoid', input_shape=(IMAGE_WIDTH, IMAGE_HEIGHT, IMAGE_CHANNELS)),
     BatchNormalization(),
     MaxPooling2D(pool_size=(2, 2)),
     Dropout(0.25),
-    Conv2D(64, (3, 3), activation='relu'),
+    Conv2D(64, (3, 3), activation='sigmoid'),
     BatchNormalization(),
     MaxPooling2D(pool_size=(2, 2)),
     Dropout(0.25),
-    Conv2D(128, (3, 3), activation='relu'),
+    Conv2D(128, (3, 3), activation='sigmoid'),
     BatchNormalization(),
     MaxPooling2D(pool_size=(2, 2)),
     Dropout(0.25),
     Flatten(),
-    Dense(512, activation='relu'),
+    Dense(512, activation='sigmoid'),
     Dropout(0.5),
     Dense(2, activation='softmax')
 ])
 
-model.compile(loss='categorical_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
+model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
 model.summary()
 
 earlystop = EarlyStopping(patience=10)
 
-learning_rate_reduction = ReduceLROnPlateau(monitor='val_accuracy', patience=2, verbose=1, factor=0.5, min_lr=0.00001)
+learning_rate_reduction = ReduceLROnPlateau(monitor='val_accuracy', patience=2, verbose=1, factor=0.5, min_lr=0.001)
 
 callbacks = [earlystop, learning_rate_reduction]
 
@@ -79,7 +76,7 @@ validate_df['category'].value_counts().plot.bar()
 
 total_train = train_df.shape[0]
 total_validate = validate_df.shape[0]
-batch_size=15
+batch_size=64
 
 train_datagen = ImageDataGenerator(
     rotation_range=15,
@@ -143,7 +140,8 @@ history = model.fit(
     callbacks=callbacks
 )
 
-model.save_weights("model.weights.h5")
+model.save_weights("lab5/pieskiSIGMOID.weights.h5")
+
 
 fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 12))
 ax1.plot(history.history['loss'], color='b', label='Training Loss')
@@ -203,4 +201,4 @@ submission_df = test_df.copy()
 submission_df['id'] = submission_df['filename'].str.split('.').str[0]
 submission_df['label'] = submission_df['category']
 submission_df.drop(['filename', 'category'], axis=1, inplace=True)
-submission_df.to_csv('submission.csv', index=False)
+submission_df.to_csv('lab5/pieskiSIGMOID.csv', index=False)
